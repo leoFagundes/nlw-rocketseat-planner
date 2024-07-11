@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  min-width: 0;
+}
+
+input {
+  color-scheme: dark;
+}
+
+.my-selected:not([disabled]) {
+  background-color: #bef264 !important;
+  color: black;
+}
+
+.my-hover:not([disabled]):hover {
+  background-color: #bef264 !important;
+  color: black;
+}
