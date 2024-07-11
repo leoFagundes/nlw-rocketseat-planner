@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InviteGuestsModal } from "./invite-guests-modal";
 import { ConfirmTripModal } from "./confirm-trip-modal";
@@ -6,6 +6,7 @@ import { DestinationAndDateStep } from "./steps/destination-and-date-step";
 import { InviteGuestsStep } from "./steps/invite-guests-step";
 import { DateRange } from "react-day-picker";
 import { api } from "../../lib/axios";
+import { ApiAlert } from "./apiAlert";
 
 export function CreateTripPage() {
   const navigate = useNavigate();
@@ -14,13 +15,29 @@ export function CreateTripPage() {
   const [emailsToInvite, setEmailsToInvite] = useState(["leo@gmail.com"]);
   const [isGueststModalOpen, setIsGuestsModalOpen] = useState(false);
   const [isConfirmTripOpen, setIsConfirmTripOpen] = useState(false);
-
   const [destination, setDestination] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
   const [eventStartAndEndDates, setEventStartAndEndDates] = useState<
     DateRange | undefined
   >();
+  const [isServerRunning, setIsServerRunning] = useState(true);
+
+  useEffect(() => {
+    async function testApi() {
+      try {
+        const response = await api.get("/");
+        if (response.data.message) {
+          setIsServerRunning(true);
+        }
+      } catch (error) {
+        console.error(error);
+        setIsServerRunning(false);
+      }
+    }
+
+    testApi();
+  }, []);
 
   function openGuestsInput() {
     setIsGuestsInputOpen(true);
@@ -175,6 +192,8 @@ export function CreateTripPage() {
           setOwnerEmail={setOwnerEmail}
         />
       )}
+
+      {!isServerRunning && <ApiAlert />}
     </div>
   );
 }
